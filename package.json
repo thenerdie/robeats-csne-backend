@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "fastify": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
