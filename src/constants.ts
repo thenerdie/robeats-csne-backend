@@ -1,3 +1,5 @@
 export const COLLECTIONS = {
-    SETTINGS: "settings"
+    SETTINGS: "settings",
+    SCORES: "scores",
+    USERS: "users"
 }
