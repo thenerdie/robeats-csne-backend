@@ -3,6 +3,8 @@ const router = express.Router();
 
 import { z } from "zod"
 
+import { DocumentSnapshot } from "@google-cloud/firestore";
+
 import { validateRequest, withUpdate, filterThrough } from "../validate.js";
 import { IUser, ISettings } from "../schemas.js";
 
@@ -38,12 +40,12 @@ router.get('/settings', validateRequest(ISettingsQuery), async (req, res, next) 
 const ISettingsUpdate = withUpdate(ISettings)
 
 router.put('/settings', validateRequest(ISettingsUpdate), async (req, res) => {
-    const settings = req.body;
+    const settings = req.body as z.infer<typeof ISettingsUpdate>;
 
     const USER_ID = `id_${settings.id}`
 
-    const docRef = db.collection(COLLECTIONS.SETTINGS).doc(USER_ID);
-    const doc = await docRef.get();
+    const docRef = db.collection(COLLECTIONS.SETTINGS).doc(USER_ID)
+    const doc = await docRef.get()
 
     const filteredSettings = filterThrough(ISettings, settings)
 
