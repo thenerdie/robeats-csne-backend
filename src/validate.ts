@@ -6,11 +6,7 @@ export const validateRequest = (schema: z.AnyZodObject): RequestHandler => {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
             const result = schema.parse(req.body);
-
-            if (!result) {
-                req.body = result;
-                return;
-            }
+            req.body = result;
 
             next();
         } catch (e: any) {
