@@ -13,33 +13,35 @@ import { COLLECTIONS, keys } from "../constants.js";
 import { calculateSkillRating } from "../skill/calculate.js";
 import { IUser } from "../schemas.js";
 
+type User = z.infer<typeof IUser>;
+
 // Define the score schema
 const IScore = z.object({
     rating: z.number(),
-    combo: z.number(),
     accuracy: z.number(),
     maxCombo: z.number(),
-    marvelous: z.number(),
-    perfects: z.number(),
-    greats: z.number(),
-    goods: z.number(),
-    bads: z.number(),
-    misses: z.number(),
+    spread: z.object({
+        marvelouses: z.number().int().min(0),
+        perfects: z.number().int().min(0),
+        greats: z.number().int().min(0),
+        goods: z.number().int().min(0),
+        bads: z.number().int().min(0),
+        misses: z.number().int().min(0),
+    }),
     player: z.any(),
-    mods: z.array(z.number()),
+    mods: z.array(z.number()).default([]),
     hash: z.string()
 });
+
+type Score = z.infer<typeof IScore>;
 
 // Mounted to /scores
 
 // GET /leaderboard - Get the top 50 scores for a song by hash
-const ILeaderboardQuery = z.object({
-    hash: z.string()
-});
 
-router.get('/leaderboard', validateRequest(ILeaderboardQuery), async (req, res, next) => {
+router.get('/leaderboard/:hash', async (req, res, next) => {
     try {
-        const { hash } = req.body;
+        const hash = req.params.hash;
 
         const scoresRef = db.collection(COLLECTIONS.SCORES);
         const querySnapshot = await scoresRef
@@ -49,12 +51,16 @@ router.get('/leaderboard', validateRequest(ILeaderboardQuery), async (req, res, 
             .get()
 
         const scores = querySnapshot.docs.map(doc => {
-            return doc.data() as z.infer<typeof IScore>
+            return doc.data() as Score
         })
+
+        if (scores.length === 0) {
+            res.json([]);
+            return;
+        }
 
         // Extract unique user references from scores
         const userRefs = Array.from(new Set(scores.map(score => score.player.path))).map(path => db.doc(path));
-
         // Batch fetch all user documents
         const userSnapshots: DocumentSnapshot[] = await db.getAll(...userRefs);
 
@@ -81,8 +87,10 @@ router.get('/leaderboard', validateRequest(ILeaderboardQuery), async (req, res, 
 // POST / - Submit a score to the leaderboards
 router.post('/', validateRequest(IScore), async (req, res, next) => {
     try {
-        const scoreInput = req.body as z.infer<typeof IScore>;
-        const { hash, player: playerData } = scoreInput;
+        const scoreInput = req.body as Score;
+        const { hash, player } = scoreInput;
+
+        const playerData = player as User;
 
         // Generate user ID and reference
         const userId = keys.users(playerData.id);

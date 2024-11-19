@@ -1,17 +1,25 @@
-import { z } from "zod";
+import { z, ZodError } from "zod";
 
 import { Request, Response, NextFunction, RequestHandler } from "express"
 
 export const validateRequest = (schema: z.AnyZodObject): RequestHandler => {
     return (req: Request, res: Response, next: NextFunction) => {
-        const { success, error } = schema.safeParse(req.body);
+        try {
+            const result = schema.parse(req.body);
 
-        if (!success) {
-            res.status(400).json({ error: error });
-            return;
+            if (!result) {
+                req.body = result;
+                return;
+            }
+
+            next();
+        } catch (e: any) {
+            if (e instanceof ZodError) {
+                res.status(400).json({ error: "Invalid request body", details: e.errors });
+            } else {
+                next(e);
+            }
         }
-
-        next();
     };
 };
 
