@@ -8,7 +8,13 @@ export const IUser = z.object({
   accuracy: z.number()
 });
 
+const Instance = z.object({
+  "_classname": z.string(),
+  "value": z.any()
+})
+
 export const ISettings = z.object({
   coolEffects: z.boolean(),
   scrollSpeed: z.number(),
+  keybinds: z.array(Instance)
 })

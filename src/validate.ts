@@ -7,7 +7,7 @@ export const validateRequest = (schema: z.AnyZodObject): RequestHandler => {
         const { success, error } = schema.safeParse(req.body);
 
         if (!success) {
-            res.status(400).json({ error: error.toString() });
+            res.status(400).json({ error: error });
             return;
         }
 
