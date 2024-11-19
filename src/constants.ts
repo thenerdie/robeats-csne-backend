@@ -9,3 +9,5 @@ export const keys = {
     settings: (id: number) => `id_${id}`,
     scores: (hash: string, playerId: number) => `${hash}_${playerId}`
 } as const
+
+export const PROJECT_ID = "robeats-cs-185a1";
