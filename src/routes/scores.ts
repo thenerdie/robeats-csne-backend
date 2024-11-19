@@ -87,8 +87,6 @@ router.get('/leaderboard/:hash', async (req, res, next) => {
 // POST / - Submit a score to the leaderboards
 router.post('/', validateRequest(IScore), async (req, res, next) => {
     try {
-        console.log(req.body);
-
         const scoreInput = req.body as Score;
         const { hash, player } = scoreInput;
 
