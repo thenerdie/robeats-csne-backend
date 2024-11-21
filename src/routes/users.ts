@@ -18,9 +18,9 @@ const ISettingsQuery = z.object({
 
 // mounted to /users
 
-router.get('/settings', validateRequest(ISettingsQuery), async (req, res, next) => {
+router.get('/settings/:id', async (req, res, next) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
         
         const USER_ID = `id_${id}`
 
