@@ -12,10 +12,6 @@ import { db } from "../db.js";
 
 import { COLLECTIONS } from "../constants.js";
 
-const ISettingsQuery = z.object({
-    id: z.number()
-})
-
 // mounted to /users
 
 router.get('/settings/:id', async (req, res, next) => {

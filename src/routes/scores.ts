@@ -30,7 +30,9 @@ const IScore = z.object({
     }),
     player: z.any(),
     mods: z.array(z.number()).default([]),
-    hash: z.string()
+    hash: z.string(),
+    rate: z.number(),
+    mean: z.number().optional()
 });
 
 type Score = z.infer<typeof IScore>;
