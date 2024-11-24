@@ -16,5 +16,6 @@ const Instance = z.object({
 export const ISettings = z.object({
   coolEffects: z.boolean(),
   scrollSpeed: z.number(),
-  keybinds: z.array(Instance)
+  keybinds: z.array(Instance),
+  od: z.number().min(0).max(20)
 })
