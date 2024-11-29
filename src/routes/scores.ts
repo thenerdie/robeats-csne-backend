@@ -32,6 +32,7 @@ const IScore = z.object({
     mods: z.array(z.number()).default([]),
     hash: z.string(),
     rate: z.number(),
+    od: z.number().default(8),
     mean: z.number().optional()
 });
 
@@ -80,7 +81,11 @@ router.get('/leaderboard/:hash', async (req, res, next) => {
             player: userMap[score.player.id] || null
         }));
 
-        res.json(populatedScores);
+        const parsed = populatedScores.map(score => {
+            return IScore.parse(score)
+        })
+
+        res.json(parsed);
     } catch (error) {
         next(error);
     }
